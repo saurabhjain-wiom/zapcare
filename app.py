@@ -3,7 +3,7 @@ import tweepy
 import requests
 from flask import Flask, jsonify, render_template
 from dotenv import load_dotenv
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 load_dotenv()
 
@@ -11,6 +11,15 @@ app = Flask(__name__)
 
 TWITTER_BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+
+# Daily cache for tweets
+_tweet_cache = {"data": None, "fetched_at": None}
+
+
+def _is_cache_valid():
+    if _tweet_cache["data"] is None or _tweet_cache["fetched_at"] is None:
+        return False
+    return datetime.now(timezone.utc) - _tweet_cache["fetched_at"] < timedelta(hours=24)
 
 # AI evangelists: username -> display name
 AI_EVANGELISTS = {
@@ -28,7 +37,10 @@ AI_EVANGELISTS = {
 
 
 def get_ai_tweets():
-    """Fetch recent AI-related tweets from evangelists using Twitter API v2."""
+    """Fetch recent AI-related tweets from evangelists using Twitter API v2. Cached for 24 hours."""
+    if _is_cache_valid():
+        return _tweet_cache["data"]
+
     if not TWITTER_BEARER_TOKEN or TWITTER_BEARER_TOKEN == "your_twitter_bearer_token_here":
         return _mock_tweets()
 
@@ -79,7 +91,10 @@ def get_ai_tweets():
 
         # Sort by likes descending
         tweets_data.sort(key=lambda x: x["likes"], reverse=True)
-        return tweets_data[:20]
+        result = tweets_data[:20]
+        _tweet_cache["data"] = result
+        _tweet_cache["fetched_at"] = datetime.now(timezone.utc)
+        return result
 
     except Exception as e:
         return {"error": str(e), "tweets": _mock_tweets()}
