@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+flask.log
+flask_err.log
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

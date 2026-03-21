@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Pulse — Tweets & World News</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #f0883e;
+      --purple: #bc8cff;
+      --red: #f85149;
+      --yellow: #d29922;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .logo h1 { font-size: 20px; font-weight: 700; }
+    .logo span { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    #last-updated { font-size: 12px; color: var(--muted); }
+    .refresh-btn {
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .refresh-btn:hover { opacity: 0.85; }
+    .refresh-btn.loading { opacity: 0.6; pointer-events: none; }
+
+    /* Demo banner */
+    .demo-banner {
+      background: linear-gradient(90deg, #1f2937, #1a2332);
+      border-bottom: 1px solid var(--yellow);
+      padding: 10px 24px;
+      font-size: 13px;
+      color: var(--yellow);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .demo-banner a { color: var(--accent); }
+    .demo-banner.hidden { display: none; }
+
+    /* Layout */
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    /* Section */
+    .section { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg3);
+    }
+    .section-icon { font-size: 18px; }
+    .section-title { font-size: 15px; font-weight: 700; }
+    .section-count {
+      margin-left: auto;
+      background: var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* Tweet card */
+    .tweet-card {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .tweet-card:last-child { border-bottom: none; }
+    .tweet-card:hover { background: var(--bg3); }
+    .tweet-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .tweet-meta { flex: 1; }
+    .tweet-author { font-weight: 600; font-size: 14px; }
+    .tweet-username { color: var(--muted); font-size: 12px; }
+    .tweet-time { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .tweet-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .tweet-stats { display: flex; gap: 16px; }
+    .stat { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+    .stat-icon { font-size: 13px; }
+    .stat.likes { color: #f85149; }
+    .stat.retweets { color: var(--green); }
+    .tweet-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .tweet-link:hover { text-decoration: underline; }
+
+    /* News card */
+    .news-card {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .news-card:last-child { border-bottom: none; }
+    .news-card:hover { background: var(--bg3); }
+    .news-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      background: var(--border);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .news-row { display: flex; align-items: flex-start; }
+    .news-content { flex: 1; }
+    .news-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .news-title a { color: inherit; text-decoration: none; }
+    .news-title a:hover { color: var(--accent); }
+    .news-desc { font-size: 12px; color: var(--muted); line-height: 1.45; margin-bottom: 6px; }
+    .news-footer { display: flex; align-items: center; gap: 12px; }
+    .news-source {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .news-date { font-size: 11px; color: var(--muted); }
+    .category-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .tag-politics { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+    .tag-sports { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+    .tag-general { background: rgba(188, 140, 255, 0.15); color: var(--purple); }
+    .tag-tech { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+
+    /* Spinner */
+    .loading-state {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error state */
+    .error-state {
+      padding: 20px;
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      margin: 16px;
+      font-size: 13px;
+      color: var(--red);
+    }
+
+    /* Full width tweet section on top */
+    .tweets-section { grid-column: 1 / -1; }
+    .tweets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    }
+
+    /* India flag accent */
+    .india-accent { border-top: 3px solid #FF9933; }
+    .world-accent { border-top: 3px solid var(--accent); }
+    .ai-accent { border-top: 3px solid var(--purple); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <h1>AI <span>Pulse</span></h1>
+  </div>
+  <div class="header-right">
+    <span id="last-updated">Loading...</span>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">
+      <span id="refresh-icon">↻</span> Refresh
+    </button>
+  </div>
+</header>
+
+<div class="demo-banner" id="demo-banner">
+  ⚠️ Running in <strong>demo mode</strong> with sample data. Add API keys to <code>.env</code> for live data.
+  See <a href="#" onclick="return false;">setup instructions</a> below.
+</div>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- AI Tweets - Full Width -->
+    <div class="section ai-accent tweets-section" id="tweets-section">
+      <div class="section-header">
+        <span class="section-icon">🤖</span>
+        <span class="section-title">AI Tweets — Karpathy, Altman, Musk & more</span>
+        <span class="section-count" id="tweet-count">—</span>
+      </div>
+      <div class="tweets-grid" id="tweets-container">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          Fetching AI tweets...
+        </div>
+      </div>
+    </div>
+
+    <!-- World News -->
+    <div class="section world-accent" id="world-section">
+      <div class="section-header">
+        <span class="section-icon">🌍</span>
+        <span class="section-title">World Top 10 — Politics · Sports · General</span>
+        <span class="section-count" id="world-count">—</span>
+      </div>
+      <div id="world-container">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          Loading world news...
+        </div>
+      </div>
+    </div>
+
+    <!-- India News -->
+    <div class="section india-accent" id="india-section">
+      <div class="section-header">
+        <span class="section-icon">🇮🇳</span>
+        <span class="section-title">India Top 10 — Politics · Sports · General</span>
+        <span class="section-count" id="india-count">—</span>
+      </div>
+      <div id="india-container">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          Loading India news...
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let isDemoMode = false;
+
+  function getInitials(name) {
+    return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  function formatNumber(n) {
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+    return n;
+  }
+
+  function renderTweets(tweets) {
+    const container = document.getElementById('tweets-container');
+    document.getElementById('tweet-count').textContent = tweets.length;
+
+    if (!tweets.length) {
+      container.innerHTML = '<div class="loading-state">No AI tweets found.</div>';
+      return;
+    }
+
+    container.innerHTML = tweets.map(t => `
+      <div class="tweet-card" onclick="window.open('${t.url}', '_blank')">
+        <div class="tweet-header">
+          <div class="avatar">
+            ${t.profile_image
+              ? `<img src="${t.profile_image}" alt="${t.author}" onerror="this.parentElement.textContent='${getInitials(t.author)}'" />`
+              : getInitials(t.author)}
+          </div>
+          <div class="tweet-meta">
+            <div class="tweet-author">${escHtml(t.author)}</div>
+            <div class="tweet-username">@${escHtml(t.username)}</div>
+            <div class="tweet-time">${escHtml(t.created_at)}</div>
+          </div>
+        </div>
+        <div class="tweet-text">${escHtml(t.text)}</div>
+        <div class="tweet-stats">
+          <span class="stat likes">❤ ${formatNumber(t.likes)}</span>
+          <span class="stat retweets">🔁 ${formatNumber(t.retweets)}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function guessCategory(title, desc) {
+    const text = (title + ' ' + (desc || '')).toLowerCase();
+    if (/election|parliament|minister|president|government|policy|vote|senate|congress|lok sabha|modi|politics|bilateral|ceasefire|treaty|sanctions/.test(text))
+      return '<span class="category-tag tag-politics">Politics</span>';
+    if (/cricket|football|ipl|olympic|tennis|fifa|nba|match|championship|gold medal|tournament|league|score|player|sport/.test(text))
+      return '<span class="category-tag tag-sports">Sports</span>';
+    if (/ai|artificial intelligence|tech|startup|space|isro|nasa|climate|health|science|discovery|economy|gdp/.test(text))
+      return '<span class="category-tag tag-tech">Tech/Science</span>';
+    return '<span class="category-tag tag-general">General</span>';
+  }
+
+  function renderNews(articles, containerId, countId) {
+    const container = document.getElementById(containerId);
+    document.getElementById(countId).textContent = articles.length;
+
+    if (!articles.length) {
+      container.innerHTML = '<div class="loading-state">No news available.</div>';
+      return;
+    }
+
+    container.innerHTML = articles.slice(0, 10).map((a, i) => `
+      <div class="news-card">
+        <div class="news-row">
+          <span class="news-num">${i + 1}</span>
+          <div class="news-content">
+            <div class="news-title">
+              ${a.url && a.url !== '#'
+                ? `<a href="${a.url}" target="_blank" rel="noopener">${escHtml(a.title)}</a>`
+                : escHtml(a.title)}
+            </div>
+            ${a.description ? `<div class="news-desc">${escHtml(a.description.slice(0, 140))}${a.description.length > 140 ? '…' : ''}</div>` : ''}
+            <div class="news-footer">
+              <span class="news-source">${escHtml(a.source)}</span>
+              <span class="news-date">${escHtml(a.published_at)}</span>
+              ${guessCategory(a.title, a.description)}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  async function loadAll() {
+    const btn = document.getElementById('refresh-btn');
+    btn.classList.add('loading');
+    document.getElementById('refresh-icon').textContent = '↻';
+
+    try {
+      const res = await fetch('/api/all');
+      const data = await res.json();
+
+      // Check demo mode
+      const banner = document.getElementById('demo-banner');
+      const isDemo = data.tweets && data.tweets.some(t => t.id && t.id.startsWith('mock'));
+      banner.classList.toggle('hidden', !isDemo);
+
+      renderTweets(data.tweets || []);
+      renderNews(data.world_news || [], 'world-container', 'world-count');
+      renderNews(data.india_news || [], 'india-container', 'india-count');
+
+      if (data.last_updated) {
+        document.getElementById('last-updated').textContent = 'Updated ' + data.last_updated;
+      }
+    } catch (err) {
+      document.getElementById('tweets-container').innerHTML =
+        `<div class="error-state">Failed to load data: ${err.message}</div>`;
+    } finally {
+      btn.classList.remove('loading');
+    }
+  }
+
+  // Auto-refresh every 5 minutes
+  loadAll();
+  setInterval(loadAll, 5 * 60 * 1000);
+</script>
+
+</body>
+</html>
