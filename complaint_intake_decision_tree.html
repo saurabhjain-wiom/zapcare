@@ -9,14 +9,14 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0f12;--surface:#151820;--surface2:#1c2030;--surface3:#222638;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.22);
-  --text:#e2e4ec;--text2:#8b8fa8;--text3:#555970;
-  --accent:#4f8ef7;--teal:#2dd4bf;--amber:#f59e0b;--coral:#f87171;--purple:#a78bfa;--green:#34d399;--gray:#6b7280;
+  --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef0f7;--surface3:#e2e5f0;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--border3:rgba(0,0,0,0.26);
+  --text:#12151f;--text2:#3a3f5c;--text3:#6b7090;
+  --accent:#2563eb;--teal:#0d9488;--amber:#d97706;--coral:#dc2626;--purple:#7c3aed;--green:#059669;--gray:#4b5563;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
 
 .page{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:48px 24px 100px}
 
@@ -53,12 +53,12 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
 /* ARROW */
 .arrow{display:flex;flex-direction:column;align-items:center;position:relative}
 .arrow-line{width:1px;background:var(--border2);position:relative}
-.arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,0.15)}
+.arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,0.35)}
 .arrow-label{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;padding:2px 6px}
 
 /* NODE BASE */
 .node{border-radius:10px;border:1px solid var(--border2);padding:14px 20px;background:var(--surface);width:100%;max-width:520px;transition:border-color .15s,box-shadow .15s}
-.node:hover{border-color:var(--border3);box-shadow:0 0 0 1px rgba(255,255,255,0.04)}
+.node:hover{border-color:var(--border3);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 .node-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
 .node-sub{font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.6}
 .node-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -120,8 +120,8 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
 /* HORIZONTAL CONNECTOR from diamond */
 .h-connector{display:flex;align-items:center;gap:0;width:100%;justify-content:center}
 .h-line{height:1px;background:var(--border2);flex:1}
-.h-arrow-right::after{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid rgba(255,255,255,.15)}
-.h-arrow-left::before{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid rgba(255,255,255,.15)}
+.h-arrow-right::after{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid rgba(0,0,0,.35)}
+.h-arrow-left::before{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid rgba(0,0,0,.35)}
 
 /* FOOTER */
 .footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:12px}
@@ -216,7 +216,7 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
             <div style="width:1px;height:28px;background:var(--border2);"></div>
           </div>
           <div style="width:1px;height:28px;background:var(--border2);position:relative">
-            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
           </div>
           <!-- PHASE 2 -->
           <div class="phase-label" style="width:100%;max-width:380px">phase 2 · guided troubleshoot</div>
@@ -244,7 +244,7 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
                 <div style="width:1px;height:24px;background:var(--border2)"></div>
               </div>
               <div style="width:1px;height:24px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
               </div>
               <div class="node node-end" style="max-width:175px;text-align:center">
                 <div class="node-title" style="color:var(--green)">Flow ends</div>
@@ -259,7 +259,7 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
                 <div style="height:1px;background:var(--border2);flex:1"></div>
               </div>
               <div style="width:1px;height:24px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
               </div>
               <div class="node" style="max-width:175px;text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
                 <div class="node-title" style="color:var(--amber)">Select category</div>
@@ -277,7 +277,7 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
           </div>
           <div style="display:flex;justify-content:flex-end;width:100%;padding-right:20%">
             <div style="width:1px;height:28px;background:var(--border2);position:relative">
-              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
             </div>
           </div>
           <div style="width:100%;display:flex;justify-content:flex-end;padding-right:10%">
