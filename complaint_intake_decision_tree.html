@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiom Chat — Complaint Intake Decision Tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f12;--surface:#151820;--surface2:#1c2030;--surface3:#222638;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.22);
+  --text:#e2e4ec;--text2:#8b8fa8;--text3:#555970;
+  --accent:#4f8ef7;--teal:#2dd4bf;--amber:#f59e0b;--coral:#f87171;--purple:#a78bfa;--green:#34d399;--gray:#6b7280;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+
+.page{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:48px 24px 100px}
+
+/* HEADER */
+.header{margin-bottom:40px}
+.brand-label{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.2;margin-bottom:10px}
+h1 em{color:var(--text2);font-style:normal;font-weight:300}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.pill{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text2)}
+.pill.hi{border-color:rgba(79,142,247,.4);color:var(--accent)}
+
+/* LEGEND */
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:36px}
+.li{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);font-family:var(--mono)}
+.ld{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* TAT BANNER */
+.tat-banner{display:flex;gap:12px;margin-bottom:36px;flex-wrap:wrap}
+.tat-card{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:14px 18px}
+.tat-card .tc{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;letter-spacing:.08em}
+.tat-card .tv{font-size:22px;font-weight:500;font-family:var(--mono)}
+.tat-card .td{font-size:11px;color:var(--text2);margin-top:4px}
+.tat-card.service .tv{color:var(--coral)}
+.tat-card.others .tv{color:var(--amber)}
+
+/* SECTION LABEL */
+.phase-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.phase-label::before,.phase-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* FLOW CONTAINER */
+.flow{display:flex;flex-direction:column;align-items:center;gap:0;position:relative}
+
+/* ARROW */
+.arrow{display:flex;flex-direction:column;align-items:center;position:relative}
+.arrow-line{width:1px;background:var(--border2);position:relative}
+.arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,0.15)}
+.arrow-label{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;padding:2px 6px}
+
+/* NODE BASE */
+.node{border-radius:10px;border:1px solid var(--border2);padding:14px 20px;background:var(--surface);width:100%;max-width:520px;transition:border-color .15s,box-shadow .15s}
+.node:hover{border-color:var(--border3);box-shadow:0 0 0 1px rgba(255,255,255,0.04)}
+.node-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.node-sub{font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.6}
+.node-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px}
+.tag-service{background:rgba(248,113,113,.1);color:var(--coral);border:1px solid rgba(248,113,113,.2)}
+.tag-others{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tag-partner{background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.2)}
+.tag-cx{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.tag-medium{background:rgba(107,114,128,.1);color:var(--gray);border:1px solid rgba(107,114,128,.2)}
+.tag-tat{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)}
+
+/* NODE VARIANTS */
+.node-entry{background:var(--surface2);border-color:var(--border3)}
+.node-phase{border-color:rgba(79,142,247,.25);background:rgba(79,142,247,.04)}
+.node-resolve{border-color:rgba(45,212,191,.25);background:rgba(45,212,191,.04)}
+.node-fast{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05)}
+.node-end{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.04)}
+.node-ticket{border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.05)}
+.node-open{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.05)}
+
+/* DIAMOND (decision) */
+.diamond-wrap{display:flex;justify-content:center;width:100%;max-width:520px}
+.diamond{width:180px;height:80px;position:relative;display:flex;align-items:center;justify-content:center}
+.diamond svg{position:absolute;inset:0;width:100%;height:100%}
+.diamond-label{position:relative;z-index:1;text-align:center}
+.diamond-label .dt{font-size:12px;font-weight:500;color:var(--text)}
+.diamond-label .ds{font-family:var(--mono);font-size:10px;color:var(--text2)}
+
+/* BRANCH SPLIT */
+.split{display:flex;gap:16px;width:100%;justify-content:center;align-items:flex-start}
+.split-branch{display:flex;flex-direction:column;align-items:center;flex:1}
+.branch-label{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;white-space:nowrap}
+.branch-yes{color:var(--teal);border-color:rgba(45,212,247,.2)}
+.branch-no{color:var(--coral);border-color:rgba(248,113,113,.2)}
+
+/* CATEGORY GRID */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:760px}
+.cat-node{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;transition:border-color .15s}
+.cat-node:hover{border-color:var(--border3)}
+.cat-node .cn{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px}
+.cat-node .cs{font-size:10px;font-family:var(--mono);color:var(--text2);line-height:1.6}
+.cat-node .cq{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+
+/* TICKET STATE BRANCHES */
+.state-branches{display:flex;gap:16px;width:100%;justify-content:center;flex-wrap:wrap}
+.state-node{background:var(--surface);border:1px solid rgba(167,139,250,.25);border-radius:8px;padding:12px 16px;flex:1;min-width:200px;max-width:280px}
+.state-node .sn{font-size:12px;font-weight:500;color:var(--purple);margin-bottom:6px}
+.state-node .ss{font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.7}
+
+/* OPEN Q */
+.openq{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.05);border-radius:6px;font-size:11px;color:var(--amber);font-family:var(--mono);margin:8px 0}
+
+/* COMMENT BOX */
+.comment-box{background:var(--surface2);border-left:3px solid var(--border2);padding:10px 14px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.7}
+.comment-box.api{border-left-color:var(--accent)}
+.comment-box.warn{border-left-color:var(--coral)}
+.comment-box.ok{border-left-color:var(--green)}
+
+/* HORIZONTAL CONNECTOR from diamond */
+.h-connector{display:flex;align-items:center;gap:0;width:100%;justify-content:center}
+.h-line{height:1px;background:var(--border2);flex:1}
+.h-arrow-right::after{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid rgba(255,255,255,.15)}
+.h-arrow-left::before{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid rgba(255,255,255,.15)}
+
+/* FOOTER */
+.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:12px}
+.footer-left{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.footer-right{font-family:var(--mono);font-size:10px;color:var(--text3)}
+
+@media(max-width:640px){
+  .cat-grid{grid-template-columns:1fr}
+  .split{flex-direction:column;align-items:center}
+  h1{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand-label">Wiom Chat System · Gate 0 → Step 2</div>
+    <h1>Complaint Intake <em>Decision Tree</em></h1>
+    <div class="pills">
+      <span class="pill hi">v0.1 draft</span>
+      <span class="pill">owner: Saurabh Jain</span>
+      <span class="pill">intent: seekHelp</span>
+      <span class="pill">states: post-install</span>
+    </div>
+  </div>
+
+  <!-- TAT BANNER -->
+  <div class="tat-banner">
+    <div class="tat-card service">
+      <div class="tc">TYPE 3 · SERVICE TICKET</div>
+      <div class="tv">4 hrs</div>
+      <div class="td">Internet Supply Down, Recharge Done Not Working</div>
+    </div>
+    <div class="tat-card others">
+      <div class="tc">TYPE 4 · OTHERS TICKET</div>
+      <div class="tv">24 hrs</div>
+      <div class="td">Disconnection, Slow Speed, Optical OOR, Payment, etc.</div>
+    </div>
+    <div class="tat-card" style="border-color:rgba(167,139,250,.25)">
+      <div class="tc">TAT BREACH BEHAVIOUR</div>
+      <div class="tv" style="font-size:15px;color:var(--purple);margin-top:2px">chat message fired</div>
+      <div class="td">No TAT promised at ticket creation. Breach triggers notification only.</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:rgba(79,142,247,.4)"></div>Phase / routing</div>
+    <div class="li"><div class="ld" style="background:rgba(248,113,113,.4)"></div>Fast path (no troubleshoot)</div>
+    <div class="li"><div class="ld" style="background:rgba(45,212,191,.4)"></div>Customer-facing / confirm</div>
+    <div class="li"><div class="ld" style="background:rgba(167,139,250,.4)"></div>Ticket state branch</div>
+    <div class="li"><div class="ld" style="background:rgba(245,158,11,.4)"></div>Open question</div>
+    <div class="li"><div class="ld" style="background:rgba(52,211,153,.4)"></div>Flow end</div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow">
+
+    <!-- ENTRY -->
+    <div class="phase-label">entry</div>
+    <div class="node node-entry" style="max-width:340px;text-align:center">
+      <div class="node-title">seekHelp intent classified</div>
+      <div class="node-sub">post-install states only · ACTIVE_PRE_EXPIRY, ACTIVE_PUTCREATED,<br>INACTIVE_POST_EXPIRY, INACTIVE_PICKUP_CREATED</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line" style="height:28px"></div></div>
+
+    <!-- PHASE 1 -->
+    <div class="phase-label">phase 1 · router ping check (silent backend)</div>
+
+    <div class="diamond-wrap">
+      <div class="diamond">
+        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(79,142,247,0.06)" stroke="rgba(79,142,247,0.35)" stroke-width="1"/></svg>
+        <div class="diamond-label">
+          <div class="dt">Router ping</div>
+          <div class="ds">received?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPLIT: YES left, NO right -->
+    <div style="width:100%;max-width:760px">
+      <div style="display:flex;gap:0;align-items:flex-start;justify-content:center">
+
+        <!-- YES branch -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
+            <div style="height:1px;background:var(--border2);flex:1"></div>
+            <span class="branch-label branch-yes" style="margin:0 8px">YES</span>
+            <div style="width:1px;height:28px;background:var(--border2);"></div>
+          </div>
+          <div style="width:1px;height:28px;background:var(--border2);position:relative">
+            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+          </div>
+          <!-- PHASE 2 -->
+          <div class="phase-label" style="width:100%;max-width:380px">phase 2 · guided troubleshoot</div>
+          <div class="node node-phase" style="max-width:380px">
+            <div class="node-title">Troubleshoot nudge</div>
+            <div class="node-sub">Restart Netbox · text-only step · max 2 nudges<br>Nudge 1 → wait → Nudge 2 → wait → auto-proceed</div>
+          </div>
+          <div class="arrow"><div class="arrow-line" style="height:24px"></div></div>
+          <div class="diamond-wrap" style="max-width:380px">
+            <div class="diamond">
+              <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(79,142,247,0.06)" stroke="rgba(79,142,247,0.35)" stroke-width="1"/></svg>
+              <div class="diamond-label">
+                <div class="dt">Resolved?</div>
+                <div class="ds">or timed out</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- YES resolved sub-split -->
+          <div style="width:100%;max-width:380px;display:flex;gap:0;align-items:flex-start;justify-content:center">
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
+                <div style="height:1px;background:var(--border2);flex:1"></div>
+                <span class="branch-label branch-yes" style="margin:0 6px;font-size:9px">YES</span>
+                <div style="width:1px;height:24px;background:var(--border2)"></div>
+              </div>
+              <div style="width:1px;height:24px;background:var(--border2);position:relative">
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+              </div>
+              <div class="node node-end" style="max-width:175px;text-align:center">
+                <div class="node-title" style="color:var(--green)">Flow ends</div>
+                <div class="node-sub">Closing message sent<br>"Koi aur madad chahiye?"</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
+                <div style="width:1px;height:24px;background:var(--border2)"></div>
+                <span class="branch-label branch-no" style="margin:0 6px;font-size:9px">NO / timeout</span>
+                <div style="height:1px;background:var(--border2);flex:1"></div>
+              </div>
+              <div style="width:1px;height:24px;background:var(--border2);position:relative">
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+              </div>
+              <div class="node" style="max-width:175px;text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
+                <div class="node-title" style="color:var(--amber)">Select category</div>
+                <div class="node-sub">Proceed to<br>category selection ↓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NO branch -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
+            <span class="branch-label branch-no" style="margin:0 8px">NO</span>
+            <div style="height:1px;background:var(--border2);flex:1"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;width:100%;padding-right:20%">
+            <div style="width:1px;height:28px;background:var(--border2);position:relative">
+              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(255,255,255,.15)"></div>
+            </div>
+          </div>
+          <div style="width:100%;display:flex;justify-content:flex-end;padding-right:10%">
+            <div class="node node-fast" style="max-width:260px">
+              <div class="node-title" style="color:var(--coral)">Fast path — direct ticket</div>
+              <div class="node-sub">Skip troubleshoot entirely<br>Category + subtype auto-set</div>
+              <div class="node-tags">
+                <span class="tag tag-service">INTERNET ISSUES</span>
+                <span class="tag tag-service">INTERNET SUPPLY DOWN</span>
+                <span class="tag tag-service">type: SERVICE</span>
+                <span class="tag tag-tat">TAT: 4 hrs</span>
+                <span class="tag tag-partner">queue: PARTNER</span>
+              </div>
+              <div class="comment-box api" style="margin-top:10px">No customer input needed.<br>NAS ID from ping check · priority: MEDIUM</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;width:100%;padding-right:20%">
+            <div style="width:1px;height:20px;background:rgba(248,113,113,.3);border-left:1px dashed rgba(248,113,113,.3)"></div>
+          </div>
+          <div style="width:100%;display:flex;justify-content:flex-end;padding-right:10%">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(248,113,113,.6);text-align:center;padding:4px 10px;border:1px dashed rgba(248,113,113,.2);border-radius:4px">↓ joins ticket state check</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CATEGORY SELECTION -->
+    <div class="arrow"><div class="arrow-line" style="height:32px"></div></div>
+    <div class="phase-label">category + subtype selection</div>
+
+    <div class="openq">⚠ Open Q: How does customer pick category? Suggestion chips (2-step) or structured screen?</div>
+
+    <div class="cat-grid">
+      <div class="cat-node" style="border-color:rgba(248,113,113,.25)">
+        <div class="cn" style="color:var(--coral)">Internet not working</div>
+        <div class="cs">
+          · Internet Supply Down<br>
+          · Recharge Done But Internet Not Working
+        </div>
+        <div class="cq">
+          <span class="tag tag-service">type: SERVICE</span>
+          <span class="tag tag-tat">TAT: 4 hrs</span>
+          <span class="tag tag-partner">queue: PARTNER</span>
+        </div>
+      </div>
+
+      <div class="cat-node" style="border-color:rgba(245,158,11,.2)">
+        <div class="cn" style="color:var(--amber)">Disconnecting / slow</div>
+        <div class="cs">
+          · Frequent Disconnection<br>
+          · Slow Speed / Range Issues
+        </div>
+        <div class="cq">
+          <span class="tag tag-others">type: OTHERS</span>
+          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
+          <span class="tag tag-partner">queue: PARTNER</span>
+        </div>
+      </div>
+
+      <div class="cat-node" style="border-color:rgba(167,139,250,.2)">
+        <div class="cn" style="color:var(--purple)">Signal / power issues</div>
+        <div class="cs">
+          · Optical Power Out of Range<br>
+          · Power Out of Range<br>
+          · Others
+        </div>
+        <div class="cq">
+          <span class="tag tag-others">type: OTHERS</span>
+          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
+          <span class="tag tag-partner">queue: PARTNER</span>
+        </div>
+      </div>
+
+      <div class="cat-node" style="border-color:rgba(107,114,128,.2)">
+        <div class="cn" style="color:var(--gray)">Other complaint</div>
+        <div class="cs">
+          Payment Issues · Shifting · Change Request<br>
+          Refund · App issues · Adapter · TV/Camera
+        </div>
+        <div class="cq">
+          <span class="tag tag-others">type: OTHERS</span>
+          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
+          <span class="tag tag-cx">queue: CX</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TICKET STATE CHECK -->
+    <div class="arrow"><div class="arrow-line" style="height:32px"></div></div>
+    <div class="phase-label">phase 3 · ticket state check</div>
+
+    <div class="state-branches">
+
+      <div class="state-node">
+        <div class="sn">5A — Open ticket exists</div>
+        <div class="ss">
+          Same issue?<br>
+          → AddComment (async via SQS)<br>
+          → Show ticket status in chat<br>
+          → If TAT breached: "Team looking at this"<br>
+          → No new ticket created<br><br>
+          Different issue?<br>
+          → Proceed to 5C (new ticket)
+        </div>
+        <div class="comment-box api" style="margin-top:10px">[Chat]: Customer reconfirmed issue on {{date}}.<br>Troubleshoot: {{true/false}}. Source: chat</div>
+      </div>
+
+      <div class="state-node">
+        <div class="sn">5B — Resolved within 48 hrs</div>
+        <div class="ss">
+          No open ticket, but type 3/4<br>
+          resolved in last 48 hours<br><br>
+          Same issue returned?<br>
+          → ReOpenTicket API<br>
+          → source: "chat" passed<br>
+          → ticket_type_3_or_4_reopen fired<br><br>
+          Different issue?<br>
+          → Proceed to 5C (new ticket)
+        </div>
+      </div>
+
+      <div class="state-node" style="border-color:rgba(45,212,191,.3)">
+        <div class="sn" style="color:var(--teal)">5C — No ticket / new complaint</div>
+        <div class="ss">
+          Create new ticket<br>
+          ticket_type: from category above<br>
+          priority: MEDIUM<br>
+          nas_id: from ping / profile<br>
+          source: "chat"<br>
+          troubleshoot_attempted: true/false<br>
+          troubleshoot_outcome: unresolved /<br>
+          &nbsp;&nbsp;timeout / skipped
+        </div>
+        <div class="comment-box ok" style="margin-top:10px">ticket_type_3_or_4_created fires<br>Kapture + CSP notified downstream</div>
+      </div>
+
+    </div>
+
+    <!-- CONFIRM -->
+    <div class="arrow"><div class="arrow-line" style="height:28px"></div></div>
+    <div class="node node-resolve" style="max-width:520px;text-align:center">
+      <div class="node-title">Confirm in chat</div>
+      <div class="node-sub">
+        Ticket ID shown · No TAT promised at creation<br>
+        TAT breach notification sent if SLA missed (4 hrs SERVICE · 24 hrs OTHERS)<br>
+        "Team abhi is par kaam kar rahi hai" if already breached
+      </div>
+    </div>
+
+  </div><!-- end .flow -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">Wiom Chat System · Step 2 Complaint Intake · v0.1 Draft</div>
+    <div class="footer-right">Owner: Saurabh Jain · pending: Q nudge times · Q category UX</div>
+  </div>
+
+</div>
+</body>
+</html>
