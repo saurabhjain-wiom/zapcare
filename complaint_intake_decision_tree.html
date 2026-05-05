@@ -473,20 +473,6 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
     <div class="state-branches">
 
       <div class="state-node">
-        <div class="sn">5A — Open ticket exists</div>
-        <div class="ss">
-          Same issue?<br>
-          → AddComment (async via SQS)<br>
-          → Show ticket status in chat<br>
-          → If TAT breached: "Team looking at this"<br>
-          → No new ticket created<br><br>
-          Different issue?<br>
-          → Proceed to 5C (new ticket)
-        </div>
-        <div class="comment-box api" style="margin-top:10px">[Chat]: Customer reconfirmed issue on {{date}}.<br>Troubleshoot: {{true/false}}. Source: chat</div>
-      </div>
-
-      <div class="state-node">
         <div class="sn">5B — Resolved within 48 hrs</div>
         <div class="ss">
           No open ticket, but type 3/4<br>
