@@ -2,575 +2,245 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wiom Chat — Complaint Intake Decision Tree</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wiom — Complaint Intake Decision Tree</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef0f7;--surface3:#e2e5f0;
-  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--border3:rgba(0,0,0,0.26);
-  --text:#12151f;--text2:#3a3f5c;--text3:#6b7090;
-  --accent:#2563eb;--teal:#0d9488;--amber:#d97706;--coral:#dc2626;--purple:#7c3aed;--green:#059669;--gray:#4b5563;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
-
-.page{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:48px 24px 100px}
-
-/* HEADER */
-.header{margin-bottom:40px}
-.brand-label{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
-h1{font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.2;margin-bottom:10px}
-h1 em{color:var(--text2);font-style:normal;font-weight:300}
-.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
-.pill{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text2)}
-.pill.hi{border-color:rgba(79,142,247,.4);color:var(--accent)}
-
-/* LEGEND */
-.legend{display:flex;gap:18px;flex-wrap:wrap;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:36px}
-.li{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);font-family:var(--mono)}
-.ld{width:11px;height:11px;border-radius:3px;flex-shrink:0}
-
-/* TAT BANNER */
-.tat-banner{display:flex;gap:12px;margin-bottom:36px;flex-wrap:wrap}
-.tat-card{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:14px 18px}
-.tat-card .tc{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;letter-spacing:.08em}
-.tat-card .tv{font-size:22px;font-weight:500;font-family:var(--mono)}
-.tat-card .td{font-size:11px;color:var(--text2);margin-top:4px}
-.tat-card.service .tv{color:var(--coral)}
-.tat-card.others .tv{color:var(--amber)}
-
-/* SECTION LABEL */
-.phase-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin:0 0 12px;display:flex;align-items:center;gap:10px}
-.phase-label::before,.phase-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* FLOW CONTAINER */
-.flow{display:flex;flex-direction:column;align-items:center;gap:0;position:relative}
-
-/* ARROW */
-.arrow{display:flex;flex-direction:column;align-items:center;position:relative}
-.arrow-line{width:1px;background:var(--border2);position:relative}
-.arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,0.35)}
-.arrow-label{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;padding:2px 6px}
-
-/* NODE BASE */
-.node{border-radius:10px;border:1px solid var(--border2);padding:14px 20px;background:var(--surface);width:100%;max-width:520px;transition:border-color .15s,box-shadow .15s}
-.node:hover{border-color:var(--border3);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
-.node-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
-.node-sub{font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.6}
-.node-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.tag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px}
-.tag-service{background:rgba(248,113,113,.1);color:var(--coral);border:1px solid rgba(248,113,113,.2)}
-.tag-others{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
-.tag-partner{background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.2)}
-.tag-cx{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
-.tag-medium{background:rgba(107,114,128,.1);color:var(--gray);border:1px solid rgba(107,114,128,.2)}
-.tag-tat{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)}
-
-/* NODE VARIANTS */
-.node-entry{background:var(--surface2);border-color:var(--border3)}
-.node-phase{border-color:rgba(79,142,247,.25);background:rgba(79,142,247,.04)}
-.node-resolve{border-color:rgba(45,212,191,.25);background:rgba(45,212,191,.04)}
-.node-fast{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05)}
-.node-end{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.04)}
-.node-ticket{border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.05)}
-.node-open{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.05)}
-
-/* DIAMOND (decision) */
-.diamond-wrap{display:flex;justify-content:center;width:100%;max-width:520px}
-.diamond{width:180px;height:80px;position:relative;display:flex;align-items:center;justify-content:center}
-.diamond svg{position:absolute;inset:0;width:100%;height:100%}
-.diamond-label{position:relative;z-index:1;text-align:center}
-.diamond-label .dt{font-size:12px;font-weight:500;color:var(--text)}
-.diamond-label .ds{font-family:var(--mono);font-size:10px;color:var(--text2)}
-
-/* BRANCH SPLIT */
-.split{display:flex;gap:16px;width:100%;justify-content:center;align-items:flex-start}
-.split-branch{display:flex;flex-direction:column;align-items:center;flex:1}
-.branch-label{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;white-space:nowrap}
-.branch-yes{color:var(--teal);border-color:rgba(45,212,247,.2)}
-.branch-no{color:var(--coral);border-color:rgba(248,113,113,.2)}
-
-/* CATEGORY GRID */
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:760px}
-.cat-node{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;transition:border-color .15s}
-.cat-node:hover{border-color:var(--border3)}
-.cat-node .cn{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px}
-.cat-node .cs{font-size:10px;font-family:var(--mono);color:var(--text2);line-height:1.6}
-.cat-node .cq{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-
-/* TICKET STATE BRANCHES */
-.state-branches{display:flex;gap:16px;width:100%;justify-content:center;flex-wrap:wrap}
-.state-node{background:var(--surface);border:1px solid rgba(167,139,250,.25);border-radius:8px;padding:12px 16px;flex:1;min-width:200px;max-width:280px}
-.state-node .sn{font-size:12px;font-weight:500;color:var(--purple);margin-bottom:6px}
-.state-node .ss{font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.7}
-
-/* OPEN Q */
-.openq{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.05);border-radius:6px;font-size:11px;color:var(--amber);font-family:var(--mono);margin:8px 0}
-
-/* COMMENT BOX */
-.comment-box{background:var(--surface2);border-left:3px solid var(--border2);padding:10px 14px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:var(--text2);font-family:var(--mono);line-height:1.7}
-.comment-box.api{border-left-color:var(--accent)}
-.comment-box.warn{border-left-color:var(--coral)}
-.comment-box.ok{border-left-color:var(--green)}
-
-/* HORIZONTAL CONNECTOR from diamond */
-.h-connector{display:flex;align-items:center;gap:0;width:100%;justify-content:center}
-.h-line{height:1px;background:var(--border2);flex:1}
-.h-arrow-right::after{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid rgba(0,0,0,.35)}
-.h-arrow-left::before{content:'';border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid rgba(0,0,0,.35)}
-
-/* FOOTER */
-.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:12px}
-.footer-left{font-family:var(--mono);font-size:10px;color:var(--text3)}
-.footer-right{font-family:var(--mono);font-size:10px;color:var(--text3)}
-
-@media(max-width:640px){
-  .cat-grid{grid-template-columns:1fr}
-  .split{flex-direction:column;align-items:center}
-  h1{font-size:20px}
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#EAECF4;font-family:'DM Sans',sans-serif;min-height:100vh}
+.page{max-width:1180px;margin:0 auto;padding:40px 24px 80px}
+.brand{font-family:'DM Mono',monospace;font-size:10px;color:#2563EB;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:26px;font-weight:700;color:#1A1D2E;letter-spacing:-.02em;margin-bottom:8px}
+h1 span{color:#9499B8;font-weight:400}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
+.pill{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid #D1D5E0;color:#5A5F7A;background:#fff}
+.pill.hi{border-color:rgba(37,99,235,.4);color:#2563EB;background:rgba(37,99,235,.06)}
+.tat{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.tc2{flex:1;min-width:160px;background:#fff;border:1px solid #D1D5E0;border-radius:10px;padding:14px 18px}
+.tc2 .tl{font-family:'DM Mono',monospace;font-size:9px;color:#9499B8;letter-spacing:.1em;margin-bottom:4px;text-transform:uppercase}
+.tc2 .tv{font-size:22px;font-weight:700;font-family:'DM Mono',monospace}
+.tc2 .td{font-size:10px;color:#5A5F7A;margin-top:3px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#fff;border:1px solid #D1D5E0;border-radius:8px;margin-bottom:28px}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:#5A5F7A;font-family:'DM Mono',monospace}
+.ld{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.wrap{background:#fff;border:1px solid #D1D5E0;border-radius:16px;padding:28px;overflow-x:auto;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.wrap svg{display:block;max-width:100%;height:auto}
+.footer{margin-top:20px;display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;color:#9499B8;flex-wrap:wrap;gap:8px}
 </style>
 </head>
 <body>
 <div class="page">
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="brand-label">Wiom Chat System · Gate 0 → Step 2</div>
-    <h1>Complaint Intake <em>Decision Tree</em></h1>
-    <div class="pills">
-      <span class="pill hi">v0.1 draft</span>
-      <span class="pill">owner: Saurabh Jain</span>
-      <span class="pill">intent: seekHelp</span>
-      <span class="pill">states: post-install</span>
-    </div>
+  <div class="brand">Wiom Chat System · Gate 0 → Step 2</div>
+  <h1>Complaint Intake <span>Decision Tree</span></h1>
+  <div class="pills">
+    <span class="pill hi">v0.3</span>
+    <span class="pill">owner: Saurabh Jain</span>
+    <span class="pill">intent: seekHelp</span>
+    <span class="pill">post-install states</span>
   </div>
-
-  <!-- TAT BANNER -->
-  <div class="tat-banner">
-    <div class="tat-card service">
-      <div class="tc">TYPE 3 · SERVICE TICKET</div>
-      <div class="tv">4 hrs</div>
-      <div class="td">Internet Supply Down, Recharge Done Not Working</div>
-    </div>
-    <div class="tat-card others">
-      <div class="tc">TYPE 4 · OTHERS TICKET</div>
-      <div class="tv">24 hrs</div>
-      <div class="td">Disconnection, Slow Speed, Optical OOR, Payment, etc.</div>
-    </div>
-    <div class="tat-card" style="border-color:rgba(167,139,250,.25)">
-      <div class="tc">TAT BREACH BEHAVIOUR</div>
-      <div class="tv" style="font-size:15px;color:var(--purple);margin-top:2px">chat message fired</div>
-      <div class="td">No TAT promised at ticket creation. Breach triggers notification only.</div>
-    </div>
+  <div class="tat">
+    <div class="tc2"><div class="tl">Type 3 · Service</div><div class="tv" style="color:#DC2626">4 hrs</div><div class="td">Internet Supply Down, Recharge Done Not Working</div></div>
+    <div class="tc2"><div class="tl">Type 4 · Others</div><div class="tv" style="color:#D97706">24 hrs</div><div class="td">Disconnection, Slow Speed, Optical OOR, Payment issues</div></div>
+    <div class="tc2"><div class="tl">TAT Breach</div><div class="tv" style="font-size:14px;color:#7C3AED;margin-top:4px">chat notification</div><div class="td">No TAT promised at creation. Breach fires message only.</div></div>
   </div>
-
-  <!-- LEGEND -->
   <div class="legend">
-    <div class="li"><div class="ld" style="background:rgba(79,142,247,.4)"></div>Phase / routing</div>
-    <div class="li"><div class="ld" style="background:rgba(248,113,113,.4)"></div>Fast path (no troubleshoot)</div>
-    <div class="li"><div class="ld" style="background:rgba(45,212,191,.4)"></div>Customer-facing / confirm</div>
-    <div class="li"><div class="ld" style="background:rgba(167,139,250,.4)"></div>Ticket state branch</div>
-    <div class="li"><div class="ld" style="background:rgba(245,158,11,.4)"></div>Open question</div>
-    <div class="li"><div class="ld" style="background:rgba(52,211,153,.4)"></div>Flow end</div>
+    <div class="li"><div class="ld" style="background:#2563EB"></div>Silent check / routing</div>
+    <div class="li"><div class="ld" style="background:#DC2626"></div>Fast path / terminal warn</div>
+    <div class="li"><div class="ld" style="background:#059669"></div>Flow ends</div>
+    <div class="li"><div class="ld" style="background:#7C3AED"></div>Ticket action</div>
+    <div class="li"><div class="ld" style="background:#0D9488"></div>Customer-facing confirm</div>
+    <div class="li"><div class="ld" style="background:#D97706"></div>Open question</div>
   </div>
-
-  <!-- FLOW -->
-  <div class="flow">
-
-    <!-- ENTRY -->
-    <div class="phase-label">entry</div>
-    <div class="node node-entry" style="max-width:340px;text-align:center">
-      <div class="node-title">seekHelp intent classified</div>
-      <div class="node-sub">post-install states only · ACTIVE_PRE_EXPIRY, ACTIVE_PUTCREATED,<br>INACTIVE_POST_EXPIRY, INACTIVE_PICKUP_CREATED</div>
-    </div>
-
-    <div class="arrow"><div class="arrow-line" style="height:28px"></div></div>
-
-    <!-- PLAN CHECK -->
-    <div class="phase-label">plan check · silent backend</div>
-
-    <div class="diamond-wrap">
-      <div class="diamond">
-        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(52,211,153,0.06)" stroke="rgba(52,211,153,0.35)" stroke-width="1"/></svg>
-        <div class="diamond-label">
-          <div class="dt">Plan active?</div>
-          <div class="ds">check account</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Plan check branches: YES centered down, NO floats right -->
-    <div style="position:relative;width:100%;max-width:760px;padding-bottom:220px">
-
-      <!-- YES: centered arrow straight down to Phase 1 -->
-      <div style="display:flex;flex-direction:column;align-items:center">
-        <div style="display:flex;align-items:center;width:100%">
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-          <span class="branch-label branch-yes" style="margin:0 10px">YES</span>
-          <div style="flex:1;height:1px;background:transparent"></div>
-        </div>
-        <div style="width:1px;height:36px;background:var(--border2);position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-      </div>
-
-      <!-- NO: absolutely positioned to the right -->
-      <div style="position:absolute;top:0;right:0;width:44%;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center">
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-          <span class="branch-label branch-no" style="margin:0 8px">NO</span>
-        </div>
-        <div style="width:1px;height:28px;background:var(--border2);margin-left:12px;position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-        <div class="node node-end">
-          <div class="node-title" style="color:var(--amber)">Ask customer to recharge</div>
-          <div class="node-sub">Plan expired or inactive<br>Prompt recharge before troubleshoot</div>
-          <div class="node-tags" style="margin-top:8px">
-            <span class="tag tag-cx">CX response</span>
-            <span class="tag tag-medium">flow ends</span>
-          </div>
-          <div class="comment-box warn" style="margin-top:10px">No ticket created.<br>Share recharge link / plan options.</div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- OPEN TICKET CHECK -->
-    <div class="phase-label">open ticket check · silent backend</div>
-
-    <div class="diamond-wrap">
-      <div class="diamond">
-        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.35)" stroke-width="1"/></svg>
-        <div class="diamond-label">
-          <div class="dt">Open ticket</div>
-          <div class="ds">exists?</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Open ticket branches: YES floats left (terminal), NO centered straight down to Phase 1 -->
-    <div style="position:relative;width:100%;max-width:760px;padding-bottom:210px">
-
-      <!-- NO: centered arrow straight down — directly into Phase 1 -->
-      <div style="display:flex;flex-direction:column;align-items:center">
-        <div style="display:flex;align-items:center;width:100%">
-          <div style="flex:1;height:1px;background:transparent"></div>
-          <span class="branch-label branch-no" style="margin:0 10px">NO</span>
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-        </div>
-        <div style="width:1px;height:36px;background:var(--border2);position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-      </div>
-
-      <!-- YES: absolutely positioned to the left — terminal -->
-      <div style="position:absolute;top:0;left:0;width:44%;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center">
-          <span class="branch-label branch-yes" style="margin:0 8px">YES</span>
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-        </div>
-        <div style="width:1px;height:28px;background:var(--border2);margin-left:12px;position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-        <div class="node node-end">
-          <div class="node-title" style="color:var(--green)">Team is looking into it</div>
-          <div class="node-sub">Inform customer open ticket exists<br>"Aapki complaint pehle se registered hai.<br>Team abhi is par kaam kar rahi hai."</div>
-          <div class="node-tags" style="margin-top:8px">
-            <span class="tag tag-cx">CX response</span>
-            <span class="tag tag-medium">flow ends</span>
-          </div>
-          <div class="comment-box ok" style="margin-top:10px">AddComment on existing ticket · source: "chat"<br>No new ticket created</div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- PHASE 1 -->
-    <div class="phase-label">phase 1 · router ping check (silent backend)</div>
-
-    <div class="diamond-wrap">
-      <div class="diamond">
-        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(79,142,247,0.06)" stroke="rgba(79,142,247,0.35)" stroke-width="1"/></svg>
-        <div class="diamond-label">
-          <div class="dt">Router ping</div>
-          <div class="ds">received?</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Router ping: YES centered down to Phase 2, NO absolute right with 48hr check -->
-    <div style="position:relative;width:100%;max-width:760px;padding-bottom:280px">
-
-      <!-- YES: centered arrow straight down into Phase 2 -->
-      <div style="display:flex;flex-direction:column;align-items:center">
-        <div style="display:flex;align-items:center;width:100%">
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-          <span class="branch-label branch-yes" style="margin:0 10px">YES</span>
-          <div style="flex:1;height:1px;background:transparent"></div>
-        </div>
-        <div style="width:1px;height:36px;background:var(--border2);position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-      </div>
-
-      <!-- NO: absolutely to the right — 48hr resolved ticket check -->
-      <div style="position:absolute;top:0;right:0;width:44%;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center">
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-          <span class="branch-label branch-no" style="margin:0 8px">NO</span>
-        </div>
-        <div style="width:1px;height:28px;background:var(--border2);margin-left:12px;position:relative">
-          <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-        </div>
-        <div class="diamond-wrap">
-          <div class="diamond" style="width:168px">
-            <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.35)" stroke-width="1"/></svg>
-            <div class="diamond-label">
-              <div class="dt" style="font-size:11px">48hr resolved</div>
-              <div class="ds">ticket exists?</div>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:0;align-items:flex-start;width:100%">
-          <!-- YES: reopen -->
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-            <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
-              <div style="height:1px;background:var(--border2);flex:1"></div>
-              <span class="branch-label branch-yes" style="margin:0 5px;font-size:9px">YES</span>
-              <div style="width:1px;height:20px;background:var(--border2)"></div>
-            </div>
-            <div style="width:1px;height:20px;background:var(--border2);position:relative">
-              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-            </div>
-            <div class="node node-end" style="text-align:center">
-              <div class="node-title" style="color:var(--teal);font-size:12px">Reopen ticket</div>
-              <div class="node-sub">ReOpenTicket API<br>source: "chat"<br>→ Confirm · flow ends</div>
-            </div>
-          </div>
-          <!-- NO: category -->
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-            <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
-              <div style="width:1px;height:20px;background:var(--border2)"></div>
-              <span class="branch-label branch-no" style="margin:0 5px;font-size:9px">NO</span>
-              <div style="height:1px;background:var(--border2);flex:1"></div>
-            </div>
-            <div style="width:1px;height:20px;background:var(--border2);position:relative">
-              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-            </div>
-            <div class="node" style="text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
-              <div class="node-title" style="color:var(--amber);font-size:12px">Select category</div>
-              <div class="node-sub">Proceed to<br>category ↓</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- PHASE 2: centered — ask customer if issue is resolved -->
-    <div class="phase-label">phase 2 · customer check</div>
-    <div class="node node-phase" style="max-width:460px;text-align:center">
-      <div class="node-title">Is the issue resolved now?</div>
-      <div class="node-sub">Ask customer directly · silent ping confirmed router is reachable</div>
-    </div>
-    <div class="arrow"><div class="arrow-line" style="height:24px"></div></div>
-
-    <!-- Resolved? diamond — centered, full width split below -->
-    <div class="diamond-wrap">
-      <div class="diamond">
-        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(79,142,247,0.06)" stroke="rgba(79,142,247,0.35)" stroke-width="1"/></svg>
-        <div class="diamond-label">
-          <div class="dt">Resolved?</div>
-          <div class="ds">customer confirms</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Resolved sub-split: YES flow ends / NO→timeout 48hr check -->
-    <div style="width:100%;max-width:760px">
-      <div style="display:flex;gap:0;align-items:flex-start;justify-content:center">
-
-        <!-- YES: flow ends -->
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
-            <div style="height:1px;background:var(--border2);flex:1"></div>
-            <span class="branch-label branch-yes" style="margin:0 8px">YES</span>
-            <div style="width:1px;height:28px;background:var(--border2)"></div>
-          </div>
-          <div style="width:1px;height:28px;background:var(--border2);position:relative">
-            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-          </div>
-          <div class="node node-end" style="max-width:280px;text-align:center">
-            <div class="node-title" style="color:var(--green)">Flow ends</div>
-            <div class="node-sub">Closing message sent<br>"Koi aur madad chahiye?"</div>
-          </div>
-        </div>
-
-        <!-- NO / timeout: 48hr resolved ticket check -->
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
-            <div style="width:1px;height:28px;background:var(--border2)"></div>
-            <span class="branch-label branch-no" style="margin:0 8px">NO / timeout</span>
-            <div style="height:1px;background:var(--border2);flex:1"></div>
-          </div>
-          <div style="width:1px;height:28px;background:var(--border2);position:relative">
-            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-          </div>
-          <div class="diamond-wrap" style="max-width:380px">
-            <div class="diamond">
-              <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.35)" stroke-width="1"/></svg>
-              <div class="diamond-label">
-                <div class="dt" style="font-size:11px">48hr resolved</div>
-                <div class="ds">ticket exists?</div>
-              </div>
-            </div>
-          </div>
-          <div style="width:100%;max-width:380px;display:flex;gap:0;align-items:flex-start;justify-content:center">
-            <!-- YES: reopen -->
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
-                <div style="height:1px;background:var(--border2);flex:1"></div>
-                <span class="branch-label branch-yes" style="margin:0 6px;font-size:9px">YES</span>
-                <div style="width:1px;height:20px;background:var(--border2)"></div>
-              </div>
-              <div style="width:1px;height:20px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-              </div>
-              <div class="node node-end" style="max-width:175px;text-align:center">
-                <div class="node-title" style="color:var(--teal);font-size:12px">Reopen ticket</div>
-                <div class="node-sub">ReOpenTicket API<br>source: "chat"<br>→ Confirm · flow ends</div>
-              </div>
-            </div>
-            <!-- NO: category -->
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
-                <div style="width:1px;height:20px;background:var(--border2)"></div>
-                <span class="branch-label branch-no" style="margin:0 6px;font-size:9px">NO</span>
-                <div style="height:1px;background:var(--border2);flex:1"></div>
-              </div>
-              <div style="width:1px;height:20px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-              </div>
-              <div class="node" style="max-width:175px;text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
-                <div class="node-title" style="color:var(--amber);font-size:12px">Select category</div>
-                <div class="node-sub">Proceed to<br>category selection ↓</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- CATEGORY SELECTION -->
-    <div class="arrow"><div class="arrow-line" style="height:32px"></div></div>
-    <div class="phase-label">category + subtype selection</div>
-
-    <div class="openq">⚠ Open Q: How does customer pick category? Suggestion chips (2-step) or structured screen?</div>
-
-    <div class="cat-grid">
-      <div class="cat-node" style="border-color:rgba(248,113,113,.25)">
-        <div class="cn" style="color:var(--coral)">Internet not working</div>
-        <div class="cs">
-          · Internet Supply Down<br>
-          · Recharge Done But Internet Not Working
-        </div>
-        <div class="cq">
-          <span class="tag tag-service">type: SERVICE</span>
-          <span class="tag tag-tat">TAT: 4 hrs</span>
-          <span class="tag tag-partner">queue: PARTNER</span>
-        </div>
-      </div>
-
-      <div class="cat-node" style="border-color:rgba(245,158,11,.2)">
-        <div class="cn" style="color:var(--amber)">Disconnecting / slow</div>
-        <div class="cs">
-          · Frequent Disconnection<br>
-          · Slow Speed / Range Issues
-        </div>
-        <div class="cq">
-          <span class="tag tag-others">type: OTHERS</span>
-          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
-          <span class="tag tag-partner">queue: PARTNER</span>
-        </div>
-      </div>
-
-      <div class="cat-node" style="border-color:rgba(167,139,250,.2)">
-        <div class="cn" style="color:var(--purple)">Signal / power issues</div>
-        <div class="cs">
-          · Optical Power Out of Range<br>
-          · Power Out of Range<br>
-          · Others
-        </div>
-        <div class="cq">
-          <span class="tag tag-others">type: OTHERS</span>
-          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
-          <span class="tag tag-partner">queue: PARTNER</span>
-        </div>
-      </div>
-
-      <div class="cat-node" style="border-color:rgba(107,114,128,.2)">
-        <div class="cn" style="color:var(--gray)">Other complaint</div>
-        <div class="cs">
-          Payment Issues · Shifting · Change Request<br>
-          Refund · App issues · Adapter · TV/Camera
-        </div>
-        <div class="cq">
-          <span class="tag tag-others">type: OTHERS</span>
-          <span class="tag" style="background:rgba(245,158,11,.08);color:var(--amber);border:1px solid rgba(245,158,11,.2)">TAT: 24 hrs</span>
-          <span class="tag tag-cx">queue: CX</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TICKET STATE CHECK -->
-    <div class="arrow"><div class="arrow-line" style="height:32px"></div></div>
-    <div class="phase-label">phase 3 · ticket state check</div>
-
-    <div class="state-branches">
-
-      <div class="state-node" style="border-color:rgba(45,212,191,.3)">
-        <div class="sn" style="color:var(--teal)">5C — No ticket / new complaint</div>
-        <div class="ss">
-          Create new ticket<br>
-          ticket_type: from category above<br>
-          priority: MEDIUM<br>
-          nas_id: from ping / profile<br>
-          source: "chat"<br>
-          troubleshoot_attempted: true/false<br>
-          troubleshoot_outcome: unresolved /<br>
-          &nbsp;&nbsp;timeout / skipped
-        </div>
-        <div class="comment-box ok" style="margin-top:10px">ticket_type_3_or_4_created fires<br>Kapture + CSP notified downstream</div>
-      </div>
-
-    </div>
-
-    <!-- CONFIRM -->
-    <div class="arrow"><div class="arrow-line" style="height:28px"></div></div>
-    <div class="node node-resolve" style="max-width:520px;text-align:center">
-      <div class="node-title">Confirm in chat</div>
-      <div class="node-sub">
-        Ticket ID shown · No TAT promised at creation<br>
-        TAT breach notification sent if SLA missed (4 hrs SERVICE · 24 hrs OTHERS)<br>
-        "Team abhi is par kaam kar rahi hai" if already breached
-      </div>
-    </div>
-
-  </div><!-- end .flow -->
-
-  <!-- FOOTER -->
+  <div class="wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1922" viewBox="0 0 1100 1922">
+<rect width="1100" height="1922" fill="#F7F8FC"/>
+<defs><pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0V44" fill="none" stroke="#C8CCE0" stroke-width="0.4" opacity="0.5"/></pattern></defs>
+<rect width="1100" height="1922" fill="url(#grid)"/>
+<rect x="400" y="30" width="300" height="62" rx="10" fill="#FFFFFF" stroke="#D1D5E0" stroke-width="1.5"/>
+<text x="550" y="52" font-size="14" font-weight="700" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">seekHelp intent classified</text>
+<text x="550" y="74" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">post-install states · ACTIVE_PRE_EXPIRY · ACTIVE_PUTCREATED · INACTIVE_POST_EXPIRY</text>
+<line x1="550" y1="92" x2="550" y2="126" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,134 545,126 555,126" fill="#94A3B8"/>
+<line x1="40" y1="136" x2="460" y2="136" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="136" x2="1060" y2="136" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="136" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">A · PLAN ACTIVE CHECK</text>
+<polygon points="550,156 638,204 550,252 462,204" fill="rgba(5,150,105,0.08)" stroke="#059669" stroke-width="1.5"/>
+<text x="550" y="197" font-size="12" font-weight="600" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Plan active?</text>
+<text x="550" y="213" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">check account state</text>
+<rect x="482" y="262" width="36" height="20" rx="10" fill="#059669" opacity="0.12"/>
+<rect x="482" y="262" width="36" height="20" rx="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.45"/>
+<text x="500" y="272" font-size="10" font-weight="400" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES</text>
+<line x1="550" y1="252" x2="550" y2="290" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,298 545,290 555,290" fill="#94A3B8"/>
+<polyline points="638,204 890,204 890,161" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="890,169 885,161 895,161" fill="#94A3B8"/>
+<rect x="678" y="180" width="30" height="20" rx="10" fill="#DC2626" opacity="0.12"/>
+<rect x="678" y="180" width="30" height="20" rx="10" fill="none" stroke="#DC2626" stroke-width="1" opacity="0.45"/>
+<text x="693" y="190" font-size="10" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO</text>
+<rect x="765" y="169" width="250" height="90" rx="10" fill="rgba(217,119,6,0.06)" stroke="#D97706" stroke-width="1.5"/>
+<text x="890" y="189" font-size="12" font-weight="600" fill="#D97706" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Prompt recharge</text>
+<text x="890" y="207" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Plan expired or inactive</text>
+<text x="890" y="222" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Show recharge options in chat</text>
+<text x="890" y="237" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">No ticket created · flow ends</text>
+<line x1="40" y1="340" x2="460" y2="340" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="340" x2="1060" y2="340" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="340" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">B · OPEN TICKET CHECK</text>
+<polygon points="550,360 638,408 550,456 462,408" fill="rgba(124,58,237,0.08)" stroke="#7C3AED" stroke-width="1.5"/>
+<text x="550" y="401" font-size="12" font-weight="600" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Open ticket exists?</text>
+<text x="550" y="417" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">type 3 or 4</text>
+<rect x="585" y="466" width="30" height="20" rx="10" fill="#DC2626" opacity="0.12"/>
+<rect x="585" y="466" width="30" height="20" rx="10" fill="none" stroke="#DC2626" stroke-width="1" opacity="0.45"/>
+<text x="600" y="476" font-size="10" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO</text>
+<line x1="550" y1="456" x2="550" y2="494" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,502 545,494 555,494" fill="#94A3B8"/>
+<polyline points="462,408 210,408 210,345" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="210,353 205,345 215,345" fill="#94A3B8"/>
+<rect x="396" y="384" width="36" height="20" rx="10" fill="#059669" opacity="0.12"/>
+<rect x="396" y="384" width="36" height="20" rx="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.45"/>
+<text x="414" y="394" font-size="10" font-weight="400" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES</text>
+<rect x="85" y="353" width="250" height="130" rx="10" fill="rgba(124,58,237,0.06)" stroke="#7C3AED" stroke-width="1.5"/>
+<text x="210" y="373" font-size="12" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Open ticket found</text>
+<text x="210" y="391" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Ask: same problem?</text>
+<text x="210" y="406" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">SAME → AddComment, show status</text>
+<text x="210" y="421" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">If TAT breached → team looking into it</text>
+<text x="210" y="436" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">No new ticket created</text>
+<text x="210" y="451" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">DIFF → proceed to ping check ↓</text>
+<line x1="40" y1="544" x2="460" y2="544" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="544" x2="1060" y2="544" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="544" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">C · ROUTER PING CHECK</text>
+<polygon points="550,564 638,612 550,660 462,612" fill="rgba(37,99,235,0.08)" stroke="#2563EB" stroke-width="1.5"/>
+<text x="550" y="605" font-size="12" font-weight="600" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Router ping</text>
+<text x="550" y="621" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">received?</text>
+<rect x="482" y="670" width="36" height="20" rx="10" fill="#059669" opacity="0.12"/>
+<rect x="482" y="670" width="36" height="20" rx="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.45"/>
+<text x="500" y="680" font-size="10" font-weight="400" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES</text>
+<line x1="550" y1="660" x2="550" y2="698" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,706 545,698 555,698" fill="#94A3B8"/>
+<polyline points="638,612 890,612 890,539" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="890,547 885,539 895,539" fill="#94A3B8"/>
+<rect x="678" y="588" width="30" height="20" rx="10" fill="#DC2626" opacity="0.12"/>
+<rect x="678" y="588" width="30" height="20" rx="10" fill="none" stroke="#DC2626" stroke-width="1" opacity="0.45"/>
+<text x="693" y="598" font-size="10" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO</text>
+<rect x="765" y="547" width="250" height="150" rx="10" fill="rgba(220,38,38,0.06)" stroke="#DC2626" stroke-width="1.5"/>
+<text x="890" y="567" font-size="12" font-weight="600" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Fast path — direct ticket</text>
+<text x="890" y="585" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Skip troubleshoot entirely</text>
+<text x="890" y="600" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">INTERNET ISSUES | INTERNET SUPPLY DOWN</text>
+<text x="890" y="615" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">type: SERVICE · TAT: 4 hrs</text>
+<text x="890" y="630" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">queue: PARTNER · priority: MEDIUM</text>
+<text x="890" y="645" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">source: "chat" · flow ends</text>
+<line x1="40" y1="748" x2="460" y2="748" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="748" x2="1060" y2="748" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="748" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">D · GUIDED TROUBLESHOOT</text>
+<rect x="400" y="768" width="300" height="78" rx="10" fill="rgba(37,99,235,0.06)" stroke="#2563EB" stroke-width="1.5"/>
+<text x="550" y="788" font-size="12" font-weight="600" fill="#2563EB" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Troubleshoot nudge</text>
+<text x="550" y="806" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Restart Netbox · text-only · max 2 nudges</text>
+<text x="550" y="821" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Nudge 1 → wait → Nudge 2 → wait → auto-proceed</text>
+<text x="550" y="836" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">extra_data: troubleshoot_attempted: true</text>
+<line x1="550" y1="846" x2="550" y2="882" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,890 545,882 555,882" fill="#94A3B8"/>
+<polygon points="550,890 638,938 550,986 462,938" fill="rgba(37,99,235,0.08)" stroke="#2563EB" stroke-width="1.5"/>
+<text x="550" y="931" font-size="12" font-weight="600" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Resolved?</text>
+<text x="550" y="947" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">customer confirms</text>
+<rect x="555" y="996" width="90" height="20" rx="10" fill="#DC2626" opacity="0.12"/>
+<rect x="555" y="996" width="90" height="20" rx="10" fill="none" stroke="#DC2626" stroke-width="1" opacity="0.45"/>
+<text x="600" y="1006" font-size="10" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO / timeout</text>
+<line x1="550" y1="986" x2="550" y2="1024" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,1032 545,1024 555,1024" fill="#94A3B8"/>
+<polyline points="462,938 210,938 210,898" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="210,906 205,898 215,898" fill="#94A3B8"/>
+<rect x="400" y="914" width="36" height="20" rx="10" fill="#059669" opacity="0.12"/>
+<rect x="400" y="914" width="36" height="20" rx="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.45"/>
+<text x="418" y="924" font-size="10" font-weight="400" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES</text>
+<rect x="85" y="906" width="250" height="72" rx="10" fill="rgba(5,150,105,0.06)" stroke="#059669" stroke-width="1.5"/>
+<text x="210" y="926" font-size="12" font-weight="600" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Issue resolved</text>
+<text x="210" y="944" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Closing message: "Koi aur madad chahiye?"</text>
+<text x="210" y="959" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">flow ends</text>
+<line x1="40" y1="1074" x2="460" y2="1074" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="1074" x2="1060" y2="1074" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="1074" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">E · 48HR RESOLVED TICKET CHECK</text>
+<polygon points="550,1094 638,1142 550,1190 462,1142" fill="rgba(217,119,6,0.08)" stroke="#D97706" stroke-width="1.5"/>
+<text x="550" y="1135" font-size="12" font-weight="600" fill="#1A1D2E" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Resolved ticket</text>
+<text x="550" y="1151" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">within 48 hrs?</text>
+<rect x="585" y="1200" width="30" height="20" rx="10" fill="#DC2626" opacity="0.12"/>
+<rect x="585" y="1200" width="30" height="20" rx="10" fill="none" stroke="#DC2626" stroke-width="1" opacity="0.45"/>
+<text x="600" y="1210" font-size="10" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO</text>
+<line x1="550" y1="1190" x2="550" y2="1228" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,1236 545,1228 555,1228" fill="#94A3B8"/>
+<polyline points="462,1142 210,1142 210,1082" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="210,1090 205,1082 215,1082" fill="#94A3B8"/>
+<rect x="400" y="1118" width="36" height="20" rx="10" fill="#059669" opacity="0.12"/>
+<rect x="400" y="1118" width="36" height="20" rx="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.45"/>
+<text x="418" y="1128" font-size="10" font-weight="400" fill="#059669" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES</text>
+<rect x="85" y="1090" width="250" height="120" rx="10" fill="rgba(13,148,136,0.06)" stroke="#0D9488" stroke-width="1.5"/>
+<text x="210" y="1110" font-size="12" font-weight="600" fill="#0D9488" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Ask: same issue returned?</text>
+<text x="210" y="1128" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">YES → ReOpenTicket API</text>
+<text x="210" y="1143" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">source: "chat" passed</text>
+<text x="210" y="1158" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">ticket_type_3_or_4_reopen fired</text>
+<text x="210" y="1173" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Confirm in chat · flow ends</text>
+<text x="210" y="1188" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">NO → proceed to category ↓</text>
+<line x1="40" y1="1278" x2="460" y2="1278" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="1278" x2="1060" y2="1278" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="1278" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">F · CATEGORY + SUBTYPE SELECTION</text>
+<rect x="305" y="1298" width="238" height="90" rx="10" fill="rgba(220,38,38,0.05)" stroke="#DC2626" stroke-width="1.2"/>
+<text x="424" y="1316" font-size="11" font-weight="600" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Internet not working</text>
+<text x="424" y="1334" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Internet Supply Down</text>
+<text x="424" y="1348" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Recharge Done Not Working</text>
+<rect x="338.0" y="1366" width="172.79999999999998" height="16" rx="8" fill="#DC2626" opacity="0.12"/>
+<rect x="338.0" y="1366" width="172.79999999999998" height="16" rx="8" fill="none" stroke="#DC2626" stroke-width="0.8" opacity="0.5"/>
+<text x="424" y="1374" font-size="8.5" font-weight="400" fill="#DC2626" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">SERVICE · TAT 4hrs · PARTNER</text>
+<rect x="557" y="1298" width="238" height="90" rx="10" fill="rgba(217,119,6,0.05)" stroke="#D97706" stroke-width="1.2"/>
+<text x="676" y="1316" font-size="11" font-weight="600" fill="#D97706" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Disconnecting / slow</text>
+<text x="676" y="1334" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Frequent Disconnection</text>
+<text x="676" y="1348" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Slow Speed / Range Issues</text>
+<rect x="590.0" y="1366" width="172.79999999999998" height="16" rx="8" fill="#D97706" opacity="0.12"/>
+<rect x="590.0" y="1366" width="172.79999999999998" height="16" rx="8" fill="none" stroke="#D97706" stroke-width="0.8" opacity="0.5"/>
+<text x="676" y="1374" font-size="8.5" font-weight="400" fill="#D97706" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">OTHERS · TAT 24hrs · PARTNER</text>
+<rect x="305" y="1402" width="238" height="90" rx="10" fill="rgba(124,58,237,0.05)" stroke="#7C3AED" stroke-width="1.2"/>
+<text x="424" y="1420" font-size="11" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Signal / power issues</text>
+<text x="424" y="1438" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Optical Power Out of Range</text>
+<text x="424" y="1452" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Power Out of Range · Others</text>
+<rect x="338.0" y="1470" width="172.79999999999998" height="16" rx="8" fill="#7C3AED" opacity="0.12"/>
+<rect x="338.0" y="1470" width="172.79999999999998" height="16" rx="8" fill="none" stroke="#7C3AED" stroke-width="0.8" opacity="0.5"/>
+<text x="424" y="1478" font-size="8.5" font-weight="400" fill="#7C3AED" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">OTHERS · TAT 24hrs · PARTNER</text>
+<rect x="557" y="1402" width="238" height="90" rx="10" fill="rgba(75,85,99,0.05)" stroke="#4B5563" stroke-width="1.2"/>
+<text x="676" y="1420" font-size="11" font-weight="600" fill="#4B5563" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Other complaint</text>
+<text x="676" y="1438" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Payment · Shifting · Change Request</text>
+<text x="676" y="1452" font-size="9.5" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Refund · App · Adapter</text>
+<rect x="604.0" y="1470" width="144.79999999999998" height="16" rx="8" fill="#4B5563" opacity="0.12"/>
+<rect x="604.0" y="1470" width="144.79999999999998" height="16" rx="8" fill="none" stroke="#4B5563" stroke-width="0.8" opacity="0.5"/>
+<text x="676" y="1478" font-size="8.5" font-weight="400" fill="#4B5563" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">OTHERS · TAT 24hrs · CX</text>
+<rect x="360" y="1508" width="380" height="26" rx="6" fill="rgba(217,119,6,0.08)" stroke="rgba(217,119,6,0.3)" stroke-width="1"/>
+<text x="550" y="1521" font-size="10" font-weight="400" fill="#D97706" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">⚠  Open Q: How does customer pick category? Chips (2-step) or structured screen?</text>
+<line x1="550" y1="1542" x2="550" y2="1576" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,1584 545,1576 555,1576" fill="#94A3B8"/>
+<line x1="40" y1="1586" x2="460" y2="1586" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="1586" x2="1060" y2="1586" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="1586" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">G · CREATE NEW TICKET</text>
+<rect x="400" y="1606" width="300" height="100" rx="10" fill="rgba(124,58,237,0.06)" stroke="#7C3AED" stroke-width="1.5"/>
+<text x="550" y="1626" font-size="12" font-weight="600" fill="#7C3AED" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">New ticket created</text>
+<text x="550" y="1644" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">ticket_type: from category · priority: MEDIUM</text>
+<text x="550" y="1659" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">nas_id: from ping or profile · source: "chat"</text>
+<text x="550" y="1674" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">troubleshoot_attempted: true / false</text>
+<text x="550" y="1689" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">troubleshoot_outcome: unresolved / timeout / skipped</text>
+<text x="550" y="1704" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">ticket_type_3_or_4_created → Kapture + CSP notified</text>
+<line x1="550" y1="1710" x2="550" y2="1744" stroke="#94A3B8" stroke-width="1.5"/>
+<polygon points="550,1752 545,1744 555,1744" fill="#94A3B8"/>
+<line x1="40" y1="1754" x2="460" y2="1754" stroke="#D1D5E0" stroke-width="1"/>
+<line x1="640" y1="1754" x2="1060" y2="1754" stroke="#D1D5E0" stroke-width="1"/>
+<text x="550" y="1754" font-size="10" font-weight="400" fill="#9499B8" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">H · CONFIRM IN CHAT</text>
+<rect x="400" y="1774" width="300" height="88" rx="10" fill="rgba(13,148,136,0.06)" stroke="#0D9488" stroke-width="1.5"/>
+<text x="550" y="1794" font-size="12" font-weight="600" fill="#0D9488" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif">Confirm in chat</text>
+<text x="550" y="1812" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">Ticket ID shown · no TAT promised at creation</text>
+<text x="550" y="1827" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">If TAT already breached → 'Team abhi kaam kar rahi hai'</text>
+<text x="550" y="1842" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">TAT breach message auto-fired if SLA missed later</text>
+<text x="550" y="1857" font-size="10" font-weight="400" fill="#5A5F7A" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace">flow ends</text>
+</svg>
+  </div>
   <div class="footer">
-    <div class="footer-left">Wiom Chat System · Step 2 Complaint Intake · v0.1 Draft</div>
-    <div class="footer-right">Owner: Saurabh Jain · pending: Q nudge times · Q category UX</div>
+    <span>Wiom Chat System · Step 2 Complaint Intake · v0.3 · Owner: Saurabh Jain</span>
+    <span>pending: nudge wait times · category selection UX</span>
   </div>
-
 </div>
 </body>
 </html>
