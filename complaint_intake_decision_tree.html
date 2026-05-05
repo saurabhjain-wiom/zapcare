@@ -241,6 +241,107 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
 
     </div>
 
+    <!-- OPEN TICKET CHECK -->
+    <div class="phase-label">open ticket check · silent backend</div>
+
+    <div class="diamond-wrap">
+      <div class="diamond">
+        <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.35)" stroke-width="1"/></svg>
+        <div class="diamond-label">
+          <div class="dt">Open ticket</div>
+          <div class="ds">exists?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open ticket split: YES left (same/different), NO right (proceed) -->
+    <div style="width:100%;max-width:760px">
+      <div style="display:flex;gap:0;align-items:flex-start;justify-content:center">
+
+        <!-- YES branch: open ticket exists → same or different? -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
+            <div style="height:1px;background:var(--border2);flex:1"></div>
+            <span class="branch-label branch-yes" style="margin:0 8px">YES</span>
+            <div style="width:1px;height:28px;background:var(--border2);"></div>
+          </div>
+          <div style="width:1px;height:28px;background:var(--border2);position:relative">
+            <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
+          </div>
+
+          <!-- Same or different? sub-diamond -->
+          <div class="diamond-wrap" style="max-width:340px">
+            <div class="diamond" style="width:160px">
+              <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.35)" stroke-width="1"/></svg>
+              <div class="diamond-label">
+                <div class="dt" style="font-size:11px">Same problem?</div>
+                <div class="ds">or different</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Same / Different sub-split -->
+          <div style="width:100%;max-width:340px;display:flex;gap:0;align-items:flex-start;justify-content:center">
+
+            <!-- SAME -->
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
+                <div style="height:1px;background:var(--border2);flex:1"></div>
+                <span class="branch-label branch-yes" style="margin:0 6px;font-size:9px">SAME</span>
+                <div style="width:1px;height:20px;background:var(--border2)"></div>
+              </div>
+              <div style="width:1px;height:20px;background:var(--border2);position:relative">
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
+              </div>
+              <div class="node node-open" style="max-width:155px;text-align:center">
+                <div class="node-title" style="color:var(--purple);font-size:12px">Same issue</div>
+                <div class="node-sub">Surface open ticket status<br>Note context · proceed to ping ↓</div>
+              </div>
+            </div>
+
+            <!-- DIFFERENT -->
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
+                <div style="width:1px;height:20px;background:var(--border2)"></div>
+                <span class="branch-label branch-no" style="margin:0 6px;font-size:9px">DIFFERENT</span>
+                <div style="height:1px;background:var(--border2);flex:1"></div>
+              </div>
+              <div style="width:1px;height:20px;background:var(--border2);position:relative">
+                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
+              </div>
+              <div class="node" style="max-width:155px;text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
+                <div class="node-title" style="color:var(--amber);font-size:12px">New complaint</div>
+                <div class="node-sub">Log as separate issue<br>Note context · proceed to ping ↓</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- NO branch: no open ticket → proceed directly -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
+            <span class="branch-label branch-no" style="margin:0 8px">NO</span>
+            <div style="height:1px;background:var(--border2);flex:1"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;width:100%;padding-right:20%">
+            <div style="width:1px;height:28px;background:var(--border2);position:relative">
+              <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
+            </div>
+          </div>
+          <div style="width:100%;display:flex;justify-content:flex-end;padding-right:10%">
+            <div class="node node-end" style="max-width:220px;text-align:center">
+              <div class="node-title" style="color:var(--teal)">No open ticket</div>
+              <div class="node-sub">Proceed to router ping ↓</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line" style="height:32px"></div></div>
+
     <!-- PHASE 1 -->
     <div class="phase-label">phase 1 · router ping check (silent backend)</div>
 
