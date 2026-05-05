@@ -258,7 +258,7 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
     <div style="width:100%;max-width:760px">
       <div style="display:flex;gap:0;align-items:flex-start;justify-content:center">
 
-        <!-- YES branch: open ticket exists → same or different? -->
+        <!-- YES branch: open ticket exists → inform customer, flow ends -->
         <div style="display:flex;flex-direction:column;align-items:center;flex:1">
           <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
             <div style="height:1px;background:var(--border2);flex:1"></div>
@@ -268,53 +268,14 @@ h1 em{color:var(--text2);font-style:normal;font-weight:300}
           <div style="width:1px;height:28px;background:var(--border2);position:relative">
             <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
           </div>
-
-          <!-- Same or different? sub-diamond -->
-          <div class="diamond-wrap" style="max-width:340px">
-            <div class="diamond" style="width:160px">
-              <svg viewBox="0 0 180 80"><polygon points="90,4 176,40 90,76 4,40" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.35)" stroke-width="1"/></svg>
-              <div class="diamond-label">
-                <div class="dt" style="font-size:11px">Same problem?</div>
-                <div class="ds">or different</div>
-              </div>
+          <div class="node node-end" style="max-width:300px;text-align:center">
+            <div class="node-title" style="color:var(--green)">Team is looking into it</div>
+            <div class="node-sub">Inform customer open ticket exists<br>"Aapki complaint pehle se registered hai.<br>Team abhi is par kaam kar rahi hai."</div>
+            <div class="node-tags" style="margin-top:8px">
+              <span class="tag tag-cx">CX response</span>
+              <span class="tag tag-medium">flow ends</span>
             </div>
-          </div>
-
-          <!-- Same / Different sub-split -->
-          <div style="width:100%;max-width:340px;display:flex;gap:0;align-items:flex-start;justify-content:center">
-
-            <!-- SAME -->
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-end">
-                <div style="height:1px;background:var(--border2);flex:1"></div>
-                <span class="branch-label branch-yes" style="margin:0 6px;font-size:9px">SAME</span>
-                <div style="width:1px;height:20px;background:var(--border2)"></div>
-              </div>
-              <div style="width:1px;height:20px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-              </div>
-              <div class="node node-open" style="max-width:155px;text-align:center">
-                <div class="node-title" style="color:var(--purple);font-size:12px">Same issue</div>
-                <div class="node-sub">Surface open ticket status<br>Note context · proceed to ping ↓</div>
-              </div>
-            </div>
-
-            <!-- DIFFERENT -->
-            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-              <div style="display:flex;align-items:center;gap:0;width:100%;justify-content:flex-start">
-                <div style="width:1px;height:20px;background:var(--border2)"></div>
-                <span class="branch-label branch-no" style="margin:0 6px;font-size:9px">DIFFERENT</span>
-                <div style="height:1px;background:var(--border2);flex:1"></div>
-              </div>
-              <div style="width:1px;height:20px;background:var(--border2);position:relative">
-                <div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid rgba(0,0,0,.35)"></div>
-              </div>
-              <div class="node" style="max-width:155px;text-align:center;border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)">
-                <div class="node-title" style="color:var(--amber);font-size:12px">New complaint</div>
-                <div class="node-sub">Log as separate issue<br>Note context · proceed to ping ↓</div>
-              </div>
-            </div>
-
+            <div class="comment-box ok" style="margin-top:10px">AddComment on existing ticket · source: "chat"<br>No new ticket created</div>
           </div>
         </div>
 
